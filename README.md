@@ -172,15 +172,21 @@ SPEC/
 
 ## Phase 2 Roadmap
 
-This is Phase 1 — knowledge readiness analysis. Phase 2 will transform the orchestrator into an agentic execution engine:
+This is Phase 1 — knowledge readiness analysis. Phase 2 transforms the orchestrator into an **agentic execution engine**. Full spec: [`spec/phase2-agentic-execution-spec.md`](spec/phase2-agentic-execution-spec.md)
 
 | Capability | Phase 1 (Current) | Phase 2 (Future) |
 |-----------|-------------------|-------------------|
 | Requirements | Inferred and displayed | Used to drive actions |
-| Knowledge matching | Score and rank | Actively retrieve and assemble |
-| Gap resolution | Report gaps | Trigger knowledge acquisition |
-| Process execution | Walk and analyze | Make decisions, execute tasks |
-| Regulatory | Evaluate and report | Enforce and gate |
+| Knowledge gaps | Reported | Resolved (agent searches external systems) |
+| Gateway decisions | All paths explored | Paths selected (LLM + state evaluation) |
+| Regulatory controls | Evaluated and reported | Enforced (block non-compliant steps) |
+| Step execution | Walked and analyzed | Executed (APIs, scripts, human tasks) |
+| Knowledge matching | Tag-based scoring | Semantic search (vector embeddings + LLM) |
+| Process learning | Stateless between runs | Adaptive (learns from execution history) |
+
+**Six capability layers:** Knowledge Acquisition Agent, Gateway Decision Engine, Regulatory Compliance Gates, Step Execution Orchestration, LLM-Enhanced Inference, Adaptive Process Learning.
+
+**Eight implementation phases** (2.1 through 2.8) ordered by dependency and risk.
 
 ## Requirements
 
