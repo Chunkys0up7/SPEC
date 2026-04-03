@@ -1,0 +1,18 @@
+{
+  "id": "proc_root_cause_analysis",
+  "title": "Root Cause Analysis Procedure",
+  "content_summary": "Structured methodology for identifying the root cause of incidents using multiple analytical techniques including Five Whys, Fishbone (Ishikawa) diagrams, and fault tree analysis. Defines the evidence collection framework, hypothesis formulation and testing process, and criteria for confirming root cause identification. Includes templates for documenting causal chains and contributing factors to support both immediate fixes and long-term preventive actions.",
+  "category": "investigation",
+  "tags": ["rca", "investigation", "hypothesis", "evidence", "root-cause", "five-whys", "fishbone"],
+  "knowledge_type": "procedure",
+  "source": "Quality Management Framework v3.1",
+  "metadata": {
+    "last_updated": "2025-06-15",
+    "owner": "Engineering Quality",
+    "review_cycle": "annual",
+    "compliance": null
+  },
+  "applicable_scopes": ["resolution", "root-cause-analysis"],
+  "scope_level": "process",
+  "own_requirements": []
+}

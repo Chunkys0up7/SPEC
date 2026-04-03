@@ -1,0 +1,35 @@
+{
+  "id": "proc_escalation_procedure",
+  "title": "Incident Escalation Procedure",
+  "content_summary": "Defines when and how to escalate incidents through management tiers based on severity, elapsed time, and business impact. Includes notification chain templates for each severity level, time-based auto-escalation rules, and contact methods per role. Covers both functional escalation (to specialist teams) and hierarchical escalation (to management) with clear trigger criteria for each path.",
+  "category": "escalation",
+  "tags": ["escalation", "notification", "critical", "management", "communication", "chain-of-command"],
+  "knowledge_type": "procedure",
+  "source": "Incident Management Policy v2.1",
+  "metadata": {
+    "last_updated": "2025-10-01",
+    "owner": "IT Operations",
+    "review_cycle": "quarterly",
+    "compliance": "ITIL v4"
+  },
+  "applicable_scopes": ["detection", "triage", "resolution"],
+  "scope_level": "process",
+  "own_requirements": [
+    {
+      "requirement_type": "data",
+      "description": "Current on-call roster and contact details",
+      "tags": ["on-call", "roster", "contacts"],
+      "priority": "critical",
+      "regulatory_framework": null,
+      "mandatory": true
+    },
+    {
+      "requirement_type": "regulatory",
+      "description": "GDPR-compliant notification for personal data incidents",
+      "tags": ["gdpr", "notification", "personal-data", "breach-notification"],
+      "priority": "critical",
+      "regulatory_framework": "GDPR",
+      "mandatory": true
+    }
+  ]
+}

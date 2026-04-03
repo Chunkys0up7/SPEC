@@ -1,0 +1,697 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  id="Definitions_1"
+                  targetNamespace="http://example.com/incident-response"
+                  exporter="Knowledge Orchestrator"
+                  exporterVersion="1.0">
+
+  <bpmn:process id="proc_incident_response" name="IT Incident Response Process" isExecutable="false">
+    <bpmn:documentation>
+      knowledge:incident-management,itil,service-restoration
+    </bpmn:documentation>
+
+    <!-- ============================================================ -->
+    <!-- L0: Root Process Flow                                        -->
+    <!-- ============================================================ -->
+    <bpmn:startEvent id="start_root" name="Incident Reported" />
+
+    <bpmn:subProcess id="sub_detection" name="Detection &amp; Classification">
+      <bpmn:documentation>
+        knowledge:detection,classification,alerting,severity-assessment
+      </bpmn:documentation>
+
+      <!-- L1: Detection & Classification -->
+      <bpmn:startEvent id="start_detection" name="Start Detection" />
+
+      <bpmn:userTask id="task_receive_alert" name="Receive Alert">
+        <bpmn:documentation>
+          knowledge:alerting,monitoring,triage,first-response
+          data:alert-source,alert-details,timestamp,affected-system
+          context:none
+          decision:severity-preliminary,escalation-needed
+          output:alert-details,affected-system-id,preliminary-severity,alert-timestamp
+        </bpmn:documentation>
+      </bpmn:userTask>
+
+      <bpmn:subProcess id="sub_classify_severity" name="Classify Severity">
+        <bpmn:documentation>
+          knowledge:severity,classification,impact-assessment,urgency-assessment
+        </bpmn:documentation>
+
+        <!-- L2: Classify Severity -->
+        <bpmn:startEvent id="start_classify" name="Start Classification" />
+
+        <bpmn:userTask id="task_assess_impact" name="Assess Impact">
+          <bpmn:documentation>
+            knowledge:severity,impact-assessment,classification,business-impact
+            data:affected-systems,user-count,revenue-impact,service-dependencies
+            context:alert-details,preliminary-severity
+            decision:impact-level
+            output:impact-level,affected-system-count,business-impact-estimate,impact-classification
+          </bpmn:documentation>
+        </bpmn:userTask>
+
+        <bpmn:userTask id="task_assess_urgency" name="Assess Urgency">
+          <bpmn:documentation>
+            knowledge:urgency-assessment,sla-compliance,time-sensitivity,priority-matrix
+            data:sla-targets,current-time,business-hours,pending-deadlines
+            context:impact-level,affected-systems,alert-details
+            decision:urgency-level
+            output:urgency-level,sla-deadline,time-to-breach,urgency-classification
+          </bpmn:documentation>
+        </bpmn:userTask>
+
+        <bpmn:exclusiveGateway id="gw_determine_severity" name="Determine Severity">
+          <bpmn:documentation>
+            decision:severity-final,critical-threshold
+            output:severity-level,routing-decision
+          </bpmn:documentation>
+        </bpmn:exclusiveGateway>
+
+        <bpmn:serviceTask id="task_escalate_immediately" name="Escalate Immediately">
+          <bpmn:documentation>
+            knowledge:escalation,critical-incident,notification,management-alerting
+            data:escalation-contacts,severity-level,incident-summary,notification-channels
+            context:impact-level,urgency-level,severity-level
+            decision:escalation-tier,notification-scope
+            output:escalation-record,notified-parties,escalation-timestamp
+          </bpmn:documentation>
+        </bpmn:serviceTask>
+
+        <bpmn:serviceTask id="task_standard_queue" name="Standard Queue">
+          <bpmn:documentation>
+            knowledge:queue-management,ticket-routing,priority-assignment,workflow-rules
+            data:queue-capacity,current-backlog,assignment-rules,sla-targets
+            context:severity-level,impact-level,urgency-level
+            decision:queue-selection,priority-assignment
+            output:queue-id,ticket-number,assigned-priority,estimated-response-time
+          </bpmn:documentation>
+        </bpmn:serviceTask>
+
+        <bpmn:endEvent id="end_classify" name="Classification Complete" />
+
+        <!-- L2 Classify Severity Flows -->
+        <bpmn:sequenceFlow id="flow_cls_start" sourceRef="start_classify" targetRef="task_assess_impact" />
+        <bpmn:sequenceFlow id="flow_cls_impact_urgency" sourceRef="task_assess_impact" targetRef="task_assess_urgency" />
+        <bpmn:sequenceFlow id="flow_cls_urgency_gw" sourceRef="task_assess_urgency" targetRef="gw_determine_severity" />
+        <bpmn:sequenceFlow id="flow_cls_critical" sourceRef="gw_determine_severity" targetRef="task_escalate_immediately" name="Critical" />
+        <bpmn:sequenceFlow id="flow_cls_noncritical" sourceRef="gw_determine_severity" targetRef="task_standard_queue" name="Non-Critical" />
+        <bpmn:sequenceFlow id="flow_cls_escalate_end" sourceRef="task_escalate_immediately" targetRef="end_classify" />
+        <bpmn:sequenceFlow id="flow_cls_queue_end" sourceRef="task_standard_queue" targetRef="end_classify" />
+      </bpmn:subProcess>
+
+      <bpmn:endEvent id="end_detection" name="Detection Complete" />
+
+      <!-- L1 Detection Flows -->
+      <bpmn:sequenceFlow id="flow_det_start" sourceRef="start_detection" targetRef="task_receive_alert" />
+      <bpmn:sequenceFlow id="flow_det_alert_classify" sourceRef="task_receive_alert" targetRef="sub_classify_severity" />
+      <bpmn:sequenceFlow id="flow_det_classify_end" sourceRef="sub_classify_severity" targetRef="end_detection" />
+    </bpmn:subProcess>
+
+    <bpmn:subProcess id="sub_triage" name="Triage">
+      <bpmn:documentation>
+        knowledge:triage,investigation,assignment,tier-routing
+      </bpmn:documentation>
+
+      <!-- L1: Triage -->
+      <bpmn:startEvent id="start_triage" name="Start Triage" />
+
+      <bpmn:subProcess id="sub_initial_investigation" name="Initial Investigation">
+        <bpmn:documentation>
+          knowledge:investigation,diagnostics,system-analysis,information-gathering
+        </bpmn:documentation>
+
+        <!-- L2: Initial Investigation -->
+        <bpmn:startEvent id="start_investigation" name="Start Investigation" />
+
+        <bpmn:userTask id="task_gather_context" name="Gather Context">
+          <bpmn:documentation>
+            knowledge:information-gathering,incident-context,stakeholder-interview,data-collection
+            data:incident-report,affected-users,system-topology,recent-changes
+            context:alert-details,severity-level,affected-systems
+            decision:investigation-scope,priority-areas
+            output:incident-context,affected-scope,recent-change-list,stakeholder-inputs
+          </bpmn:documentation>
+        </bpmn:userTask>
+
+        <bpmn:userTask id="task_check_known_issues" name="Check Known Issues">
+          <bpmn:documentation>
+            knowledge:known-errors,knowledge-base,historical-incidents,pattern-matching
+            data:known-error-database,past-incidents,workaround-catalog,configuration-changes
+            context:incident-context,affected-systems,error-symptoms
+            decision:known-issue-match,workaround-applicable
+            output:matched-known-issues,applicable-workarounds,historical-resolution-data
+          </bpmn:documentation>
+        </bpmn:userTask>
+
+        <bpmn:subProcess id="sub_analyze_logs" name="Analyze Logs">
+          <bpmn:documentation>
+            knowledge:log-analysis,monitoring,troubleshooting,pattern-recognition
+          </bpmn:documentation>
+
+          <!-- L3: Analyze Logs -->
+          <bpmn:startEvent id="start_logs" name="Start Log Analysis" />
+
+          <bpmn:serviceTask id="task_collect_logs" name="Collect Logs">
+            <bpmn:documentation>
+              knowledge:log-collection,monitoring,system-access,log-aggregation
+              data:system-logs,log-locations,time-window,affected-components
+              context:incident-severity,affected-systems,investigation-scope
+              decision:log-sources-selection,time-range-determination
+              output:collected-logs,log-timespan,log-sources-accessed
+            </bpmn:documentation>
+          </bpmn:serviceTask>
+
+          <bpmn:scriptTask id="task_filter_relevant" name="Filter Relevant">
+            <bpmn:documentation>
+              knowledge:log-filtering,regex-patterns,noise-reduction,relevance-criteria
+              data:collected-logs,filter-rules,error-patterns,baseline-metrics
+              context:affected-systems,incident-timeframe,known-error-signatures
+              decision:relevance-threshold,filter-criteria
+              output:filtered-logs,noise-reduction-ratio,flagged-entries
+            </bpmn:documentation>
+          </bpmn:scriptTask>
+
+          <bpmn:userTask id="task_identify_patterns" name="Identify Patterns">
+            <bpmn:documentation>
+              knowledge:pattern-recognition,anomaly-detection,trend-analysis,root-cause-indicators
+              data:filtered-logs,baseline-patterns,anomaly-thresholds,error-catalogs
+              context:incident-context,affected-components,recent-changes
+              decision:pattern-significance,anomaly-classification
+              output:identified-patterns,anomaly-list,pattern-timeline,correlation-candidates
+            </bpmn:documentation>
+          </bpmn:userTask>
+
+          <bpmn:userTask id="task_correlate_events" name="Correlate Events">
+            <bpmn:documentation>
+              knowledge:event-correlation,timeline-analysis,dependency-mapping,causal-analysis
+              data:identified-patterns,system-events,deployment-history,change-records
+              context:identified-patterns,affected-systems,incident-timeline
+              decision:correlation-strength,causal-relationship
+              output:correlated-events,event-timeline,causal-chain,root-cause-candidates
+            </bpmn:documentation>
+          </bpmn:userTask>
+
+          <bpmn:endEvent id="end_logs" name="Log Analysis Complete" />
+
+          <!-- L3 Analyze Logs Flows -->
+          <bpmn:sequenceFlow id="flow_log_start" sourceRef="start_logs" targetRef="task_collect_logs" />
+          <bpmn:sequenceFlow id="flow_log_collect_filter" sourceRef="task_collect_logs" targetRef="task_filter_relevant" />
+          <bpmn:sequenceFlow id="flow_log_filter_patterns" sourceRef="task_filter_relevant" targetRef="task_identify_patterns" />
+          <bpmn:sequenceFlow id="flow_log_patterns_correlate" sourceRef="task_identify_patterns" targetRef="task_correlate_events" />
+          <bpmn:sequenceFlow id="flow_log_correlate_end" sourceRef="task_correlate_events" targetRef="end_logs" />
+        </bpmn:subProcess>
+
+        <bpmn:userTask id="task_verify_systems" name="Verify Systems">
+          <bpmn:documentation>
+            knowledge:system-verification,health-checks,dependency-validation,service-status
+            data:system-health-data,service-endpoints,dependency-map,monitoring-dashboards
+            context:correlated-events,affected-systems,log-analysis-findings
+            decision:system-health-status,additional-investigation-needed
+            output:system-status-report,verified-affected-systems,healthy-systems,degraded-services
+          </bpmn:documentation>
+        </bpmn:userTask>
+
+        <bpmn:endEvent id="end_investigation" name="Investigation Complete" />
+
+        <!-- L2 Initial Investigation Flows -->
+        <bpmn:sequenceFlow id="flow_inv_start" sourceRef="start_investigation" targetRef="task_gather_context" />
+        <bpmn:sequenceFlow id="flow_inv_gather_known" sourceRef="task_gather_context" targetRef="task_check_known_issues" />
+        <bpmn:sequenceFlow id="flow_inv_known_logs" sourceRef="task_check_known_issues" targetRef="sub_analyze_logs" />
+        <bpmn:sequenceFlow id="flow_inv_logs_verify" sourceRef="sub_analyze_logs" targetRef="task_verify_systems" />
+        <bpmn:sequenceFlow id="flow_inv_verify_end" sourceRef="task_verify_systems" targetRef="end_investigation" />
+      </bpmn:subProcess>
+
+      <bpmn:exclusiveGateway id="gw_assignment" name="Assignment">
+        <bpmn:documentation>
+          decision:tier-assignment,complexity-assessment,specialist-needed
+          output:assigned-tier,assignment-rationale
+        </bpmn:documentation>
+      </bpmn:exclusiveGateway>
+
+      <bpmn:userTask id="task_assign_t1" name="Assign T1">
+        <bpmn:documentation>
+          knowledge:tier1-procedures,service-desk,basic-troubleshooting,ticket-management
+          data:t1-roster,available-agents,ticket-details,sla-targets
+          context:investigation-findings,severity-level,incident-type
+          decision:agent-selection,workload-balancing
+          output:assigned-agent,assignment-timestamp,expected-response-time
+        </bpmn:documentation>
+      </bpmn:userTask>
+
+      <bpmn:userTask id="task_assign_t2" name="Assign T2">
+        <bpmn:documentation>
+          knowledge:tier2-procedures,advanced-troubleshooting,system-administration,specialized-support
+          data:t2-roster,skill-matrix,incident-complexity,system-expertise-map
+          context:investigation-findings,severity-level,affected-technology-stack
+          decision:specialist-selection,skill-match
+          output:assigned-specialist,assignment-timestamp,specialist-expertise-area
+        </bpmn:documentation>
+      </bpmn:userTask>
+
+      <bpmn:subProcess id="sub_assign_t3" name="Assign T3 - Specialist Assignment">
+        <bpmn:documentation>
+          knowledge:specialist-assignment,expert-routing,vendor-management,escalation
+        </bpmn:documentation>
+
+        <!-- L2: Assign T3 -->
+        <bpmn:startEvent id="start_t3" name="Start T3 Assignment" />
+
+        <bpmn:userTask id="task_identify_specialists" name="Identify Specialists">
+          <bpmn:documentation>
+            knowledge:expert-directory,skill-taxonomy,vendor-catalog,specialist-domains
+            data:specialist-database,skill-requirements,vendor-contracts,expertise-areas
+            context:incident-type,affected-technology,investigation-findings,complexity-assessment
+            decision:specialist-type-needed,internal-vs-vendor
+            output:candidate-specialists,required-expertise,specialist-shortlist
+          </bpmn:documentation>
+        </bpmn:userTask>
+
+        <bpmn:serviceTask id="task_check_availability" name="Check Availability">
+          <bpmn:documentation>
+            knowledge:scheduling,on-call-management,resource-allocation,calendar-integration
+            data:specialist-calendars,on-call-schedule,current-assignments,time-zones
+            context:candidate-specialists,urgency-level,required-expertise
+            decision:available-specialist-selection,scheduling-priority
+            output:available-specialists,earliest-availability,scheduling-conflicts
+          </bpmn:documentation>
+        </bpmn:serviceTask>
+
+        <bpmn:serviceTask id="task_assign_notify" name="Assign &amp; Notify">
+          <bpmn:documentation>
+            knowledge:notification-systems,assignment-workflow,communication-protocols,handoff-procedures
+            data:selected-specialist,notification-templates,incident-summary,contact-details
+            context:available-specialists,incident-details,urgency-level
+            decision:notification-channel,assignment-confirmation
+            output:assignment-confirmation,notification-sent,handoff-package,assigned-specialist-id
+          </bpmn:documentation>
+        </bpmn:serviceTask>
+
+        <bpmn:endEvent id="end_t3" name="T3 Assignment Complete" />
+
+        <!-- L2 Assign T3 Flows -->
+        <bpmn:sequenceFlow id="flow_t3_start" sourceRef="start_t3" targetRef="task_identify_specialists" />
+        <bpmn:sequenceFlow id="flow_t3_identify_avail" sourceRef="task_identify_specialists" targetRef="task_check_availability" />
+        <bpmn:sequenceFlow id="flow_t3_avail_assign" sourceRef="task_check_availability" targetRef="task_assign_notify" />
+        <bpmn:sequenceFlow id="flow_t3_assign_end" sourceRef="task_assign_notify" targetRef="end_t3" />
+      </bpmn:subProcess>
+
+      <bpmn:endEvent id="end_triage" name="Triage Complete" />
+
+      <!-- L1 Triage Flows -->
+      <bpmn:sequenceFlow id="flow_tri_start" sourceRef="start_triage" targetRef="sub_initial_investigation" />
+      <bpmn:sequenceFlow id="flow_tri_inv_gw" sourceRef="sub_initial_investigation" targetRef="gw_assignment" />
+      <bpmn:sequenceFlow id="flow_tri_gw_t1" sourceRef="gw_assignment" targetRef="task_assign_t1" name="Tier1" />
+      <bpmn:sequenceFlow id="flow_tri_gw_t2" sourceRef="gw_assignment" targetRef="task_assign_t2" name="Tier2" />
+      <bpmn:sequenceFlow id="flow_tri_gw_t3" sourceRef="gw_assignment" targetRef="sub_assign_t3" name="Tier3" />
+      <bpmn:sequenceFlow id="flow_tri_t1_end" sourceRef="task_assign_t1" targetRef="end_triage" />
+      <bpmn:sequenceFlow id="flow_tri_t2_end" sourceRef="task_assign_t2" targetRef="end_triage" />
+      <bpmn:sequenceFlow id="flow_tri_t3_end" sourceRef="sub_assign_t3" targetRef="end_triage" />
+    </bpmn:subProcess>
+
+    <bpmn:subProcess id="sub_resolution" name="Resolution">
+      <bpmn:documentation>
+        knowledge:resolution,containment,root-cause-analysis,fix-implementation
+      </bpmn:documentation>
+
+      <!-- L1: Resolution -->
+      <bpmn:startEvent id="start_resolution" name="Start Resolution" />
+
+      <bpmn:subProcess id="sub_containment" name="Containment">
+        <bpmn:documentation>
+          knowledge:containment,isolation,temporary-mitigation,damage-control
+        </bpmn:documentation>
+
+        <!-- L2: Containment -->
+        <bpmn:startEvent id="start_containment" name="Start Containment" />
+
+        <bpmn:userTask id="task_immediate_actions" name="Immediate Actions">
+          <bpmn:documentation>
+            knowledge:containment,first-response,rollback,isolation
+            data:affected-systems,current-impact,service-dependencies
+            context:incident-severity,affected-systems,investigation-findings,triage-outcome
+            decision:containment-strategy,rollback-needed
+            output:containment-actions-taken,systems-isolated,temporary-mitigations
+          </bpmn:documentation>
+        </bpmn:userTask>
+
+        <bpmn:parallelGateway id="gw_containment_fork" name="Containment Fork">
+          <bpmn:documentation>
+            decision:parallel-containment-paths
+            output:fork-initiated,parallel-tracks-started
+          </bpmn:documentation>
+        </bpmn:parallelGateway>
+
+        <bpmn:userTask id="task_apply_temp_fix" name="Apply Temporary Fix">
+          <bpmn:documentation>
+            knowledge:temporary-fixes,workarounds,quick-patches,service-restoration
+            data:workaround-catalog,fix-templates,affected-configurations,rollback-points
+            context:containment-strategy,affected-systems,immediate-actions-taken
+            decision:fix-selection,risk-assessment
+            output:temporary-fix-applied,fix-details,rollback-instructions,fix-effectiveness
+          </bpmn:documentation>
+        </bpmn:userTask>
+
+        <bpmn:serviceTask id="task_isolate_systems" name="Isolate Affected Systems">
+          <bpmn:documentation>
+            knowledge:system-isolation,network-segmentation,access-control,quarantine-procedures
+            data:network-topology,firewall-rules,affected-endpoints,isolation-playbook
+            context:affected-systems,containment-strategy,service-dependencies
+            decision:isolation-scope,isolation-method
+            output:isolated-systems,isolation-method-used,network-changes-applied,isolation-timestamp
+          </bpmn:documentation>
+        </bpmn:serviceTask>
+
+        <bpmn:parallelGateway id="gw_containment_join" name="Containment Join">
+          <bpmn:documentation>
+            decision:containment-paths-complete
+            output:join-completed,all-containment-tracks-done
+          </bpmn:documentation>
+        </bpmn:parallelGateway>
+
+        <bpmn:userTask id="task_validate_containment" name="Validate Containment">
+          <bpmn:documentation>
+            knowledge:validation-procedures,containment-verification,impact-reassessment,monitoring
+            data:system-health-post-containment,monitoring-metrics,user-reports,service-status
+            context:containment-actions-taken,isolation-status,temporary-fix-status
+            decision:containment-effective,additional-actions-needed
+            output:containment-validation-result,residual-impact,containment-effectiveness-score
+          </bpmn:documentation>
+        </bpmn:userTask>
+
+        <bpmn:endEvent id="end_containment" name="Containment Complete" />
+
+        <!-- L2 Containment Flows -->
+        <bpmn:sequenceFlow id="flow_cnt_start" sourceRef="start_containment" targetRef="task_immediate_actions" />
+        <bpmn:sequenceFlow id="flow_cnt_actions_fork" sourceRef="task_immediate_actions" targetRef="gw_containment_fork" />
+        <bpmn:sequenceFlow id="flow_cnt_fork_fix" sourceRef="gw_containment_fork" targetRef="task_apply_temp_fix" />
+        <bpmn:sequenceFlow id="flow_cnt_fork_isolate" sourceRef="gw_containment_fork" targetRef="task_isolate_systems" />
+        <bpmn:sequenceFlow id="flow_cnt_fix_join" sourceRef="task_apply_temp_fix" targetRef="gw_containment_join" />
+        <bpmn:sequenceFlow id="flow_cnt_isolate_join" sourceRef="task_isolate_systems" targetRef="gw_containment_join" />
+        <bpmn:sequenceFlow id="flow_cnt_join_validate" sourceRef="gw_containment_join" targetRef="task_validate_containment" />
+        <bpmn:sequenceFlow id="flow_cnt_validate_end" sourceRef="task_validate_containment" targetRef="end_containment" />
+      </bpmn:subProcess>
+
+      <bpmn:subProcess id="sub_rca" name="Root Cause Analysis">
+        <bpmn:documentation>
+          knowledge:root-cause-analysis,investigation,evidence-collection,hypothesis-testing
+        </bpmn:documentation>
+
+        <!-- L2: Root Cause Analysis -->
+        <bpmn:startEvent id="start_rca" name="Start RCA" />
+
+        <bpmn:userTask id="task_collect_evidence" name="Collect Evidence">
+          <bpmn:documentation>
+            knowledge:evidence-collection,forensics,data-preservation,chain-of-custody
+            data:system-snapshots,log-archives,configuration-backups,user-reports
+            context:containment-results,correlated-events,affected-systems
+            decision:evidence-scope,preservation-method
+            output:evidence-inventory,preserved-artifacts,evidence-timeline,collection-notes
+          </bpmn:documentation>
+        </bpmn:userTask>
+
+        <bpmn:userTask id="task_hypothesize" name="Hypothesize">
+          <bpmn:documentation>
+            knowledge:hypothesis-generation,root-cause-frameworks,five-whys,fishbone-analysis
+            data:evidence-inventory,incident-timeline,system-architecture,change-history
+            context:evidence-collected,correlated-events,investigation-findings
+            decision:leading-hypothesis,investigation-direction
+            output:hypothesis-list,leading-hypothesis,supporting-evidence,test-plan-outline
+          </bpmn:documentation>
+        </bpmn:userTask>
+
+        <bpmn:subProcess id="sub_test_hypothesis" name="Test Hypothesis">
+          <bpmn:documentation>
+            knowledge:hypothesis-testing,experimental-design,verification,validation
+          </bpmn:documentation>
+
+          <!-- L3: Test Hypothesis -->
+          <bpmn:startEvent id="start_test_hyp" name="Start Hypothesis Test" />
+
+          <bpmn:userTask id="task_design_test" name="Design Test">
+            <bpmn:documentation>
+              knowledge:test-design,experimental-methodology,controlled-testing,validation-criteria
+              data:hypothesis-details,test-environment,available-tools,success-criteria
+              context:leading-hypothesis,evidence-collected,affected-systems
+              decision:test-approach,test-scope
+              output:test-plan,test-environment-setup,expected-outcomes,test-criteria
+            </bpmn:documentation>
+          </bpmn:userTask>
+
+          <bpmn:serviceTask id="task_execute_test" name="Execute Test">
+            <bpmn:documentation>
+              knowledge:test-execution,automation,environment-management,result-capture
+              data:test-plan,test-scripts,test-environment,monitoring-config
+              context:test-plan,hypothesis-details,test-environment-setup
+              decision:test-continuation,abort-criteria
+              output:test-results,execution-log,observed-behavior,metrics-captured
+            </bpmn:documentation>
+          </bpmn:serviceTask>
+
+          <bpmn:exclusiveGateway id="gw_evaluate_results" name="Evaluate Results">
+            <bpmn:documentation>
+              decision:hypothesis-confirmed,hypothesis-rejected,inconclusive
+              output:evaluation-outcome,confidence-level
+            </bpmn:documentation>
+          </bpmn:exclusiveGateway>
+
+          <bpmn:endEvent id="end_test_confirmed" name="Hypothesis Confirmed" />
+
+          <bpmn:userTask id="task_revise_hypothesis" name="Revise Hypothesis">
+            <bpmn:documentation>
+              knowledge:hypothesis-revision,iterative-analysis,alternative-theories,evidence-review
+              data:test-results,original-hypothesis,evidence-inventory,new-observations
+              context:test-results,evaluation-outcome,original-hypothesis
+              decision:revised-hypothesis,abandon-or-continue
+              output:revised-hypothesis,updated-evidence-assessment,new-test-direction
+            </bpmn:documentation>
+          </bpmn:userTask>
+
+          <bpmn:endEvent id="end_test_revised" name="Hypothesis Revised" />
+
+          <!-- L3 Test Hypothesis Flows -->
+          <bpmn:sequenceFlow id="flow_hyp_start" sourceRef="start_test_hyp" targetRef="task_design_test" />
+          <bpmn:sequenceFlow id="flow_hyp_design_exec" sourceRef="task_design_test" targetRef="task_execute_test" />
+          <bpmn:sequenceFlow id="flow_hyp_exec_eval" sourceRef="task_execute_test" targetRef="gw_evaluate_results" />
+          <bpmn:sequenceFlow id="flow_hyp_confirmed" sourceRef="gw_evaluate_results" targetRef="end_test_confirmed" name="Confirmed" />
+          <bpmn:sequenceFlow id="flow_hyp_rejected" sourceRef="gw_evaluate_results" targetRef="task_revise_hypothesis" name="Rejected" />
+          <bpmn:sequenceFlow id="flow_hyp_revise_end" sourceRef="task_revise_hypothesis" targetRef="end_test_revised" />
+        </bpmn:subProcess>
+
+        <bpmn:userTask id="task_document_findings" name="Document Findings">
+          <bpmn:documentation>
+            knowledge:documentation,technical-writing,root-cause-reporting,knowledge-capture
+            data:root-cause-determination,evidence-summary,test-results,timeline
+            context:hypothesis-outcome,evidence-collected,test-results
+            decision:root-cause-confirmed,documentation-completeness
+            output:rca-report,confirmed-root-cause,contributing-factors,prevention-recommendations
+          </bpmn:documentation>
+        </bpmn:userTask>
+
+        <bpmn:endEvent id="end_rca" name="RCA Complete" />
+
+        <!-- L2 RCA Flows -->
+        <bpmn:sequenceFlow id="flow_rca_start" sourceRef="start_rca" targetRef="task_collect_evidence" />
+        <bpmn:sequenceFlow id="flow_rca_evidence_hyp" sourceRef="task_collect_evidence" targetRef="task_hypothesize" />
+        <bpmn:sequenceFlow id="flow_rca_hyp_test" sourceRef="task_hypothesize" targetRef="sub_test_hypothesis" />
+        <bpmn:sequenceFlow id="flow_rca_test_doc" sourceRef="sub_test_hypothesis" targetRef="task_document_findings" />
+        <bpmn:sequenceFlow id="flow_rca_doc_end" sourceRef="task_document_findings" targetRef="end_rca" />
+      </bpmn:subProcess>
+
+      <bpmn:subProcess id="sub_fix_implementation" name="Fix Implementation">
+        <bpmn:documentation>
+          knowledge:fix-implementation,development,testing,deployment
+        </bpmn:documentation>
+
+        <!-- L2: Fix Implementation -->
+        <bpmn:startEvent id="start_fix" name="Start Fix Implementation" />
+
+        <bpmn:userTask id="task_develop_fix" name="Develop Fix">
+          <bpmn:documentation>
+            knowledge:development,coding,patch-creation,solution-design
+            data:root-cause-details,affected-codebase,development-environment,coding-standards
+            context:confirmed-root-cause,affected-systems,containment-measures
+            decision:fix-approach,scope-of-change
+            output:fix-code,change-description,affected-files,development-notes
+          </bpmn:documentation>
+        </bpmn:userTask>
+
+        <bpmn:userTask id="task_peer_review" name="Peer Review">
+          <bpmn:documentation>
+            knowledge:code-review,quality-assurance,security-review,best-practices
+            data:fix-code,change-description,coding-standards,security-checklist
+            context:root-cause,fix-approach,affected-systems
+            decision:review-approval,changes-required
+            output:review-feedback,approval-status,review-comments,quality-score
+          </bpmn:documentation>
+        </bpmn:userTask>
+
+        <bpmn:subProcess id="sub_test_fix" name="Test Fix">
+          <bpmn:documentation>
+            knowledge:testing,quality-assurance,staging-deployment,validation
+          </bpmn:documentation>
+
+          <!-- L3: Test Fix -->
+          <bpmn:startEvent id="start_test_fix" name="Start Testing" />
+
+          <bpmn:scriptTask id="task_unit_test" name="Unit Test">
+            <bpmn:documentation>
+              knowledge:unit-testing,test-frameworks,code-coverage,test-automation
+              data:fix-code,test-suite,test-data,coverage-thresholds
+              context:fix-details,affected-modules,coding-standards
+              decision:unit-test-pass,coverage-sufficient
+              output:unit-test-results,code-coverage-report,failed-tests,test-execution-time
+            </bpmn:documentation>
+          </bpmn:scriptTask>
+
+          <bpmn:scriptTask id="task_integration_test" name="Integration Test">
+            <bpmn:documentation>
+              knowledge:integration-testing,api-testing,end-to-end-testing,dependency-validation
+              data:integration-test-suite,api-contracts,test-environment,service-dependencies
+              context:unit-test-results,affected-integrations,service-dependencies
+              decision:integration-test-pass,regression-detected
+              output:integration-test-results,api-test-report,regression-findings,compatibility-status
+            </bpmn:documentation>
+          </bpmn:scriptTask>
+
+          <bpmn:serviceTask id="task_staging_deploy" name="Staging Deploy">
+            <bpmn:documentation>
+              knowledge:staging-deployment,environment-management,deployment-automation,configuration-management
+              data:deployment-package,staging-config,environment-variables,deployment-scripts
+              context:test-results,fix-code,deployment-checklist
+              decision:staging-deploy-proceed,environment-readiness
+              output:staging-deployment-status,deployed-version,environment-url,deployment-log
+            </bpmn:documentation>
+          </bpmn:serviceTask>
+
+          <bpmn:userTask id="task_smoke_test" name="Smoke Test">
+            <bpmn:documentation>
+              knowledge:smoke-testing,user-acceptance,critical-path-validation,regression-check
+              data:smoke-test-checklist,critical-workflows,staging-url,expected-behaviors
+              context:staging-deployment-status,fix-details,original-incident-symptoms
+              decision:smoke-test-pass,production-ready
+              output:smoke-test-results,critical-path-status,production-readiness-assessment
+            </bpmn:documentation>
+          </bpmn:userTask>
+
+          <bpmn:endEvent id="end_test_fix" name="Testing Complete" />
+
+          <!-- L3 Test Fix Flows -->
+          <bpmn:sequenceFlow id="flow_tf_start" sourceRef="start_test_fix" targetRef="task_unit_test" />
+          <bpmn:sequenceFlow id="flow_tf_unit_int" sourceRef="task_unit_test" targetRef="task_integration_test" />
+          <bpmn:sequenceFlow id="flow_tf_int_staging" sourceRef="task_integration_test" targetRef="task_staging_deploy" />
+          <bpmn:sequenceFlow id="flow_tf_staging_smoke" sourceRef="task_staging_deploy" targetRef="task_smoke_test" />
+          <bpmn:sequenceFlow id="flow_tf_smoke_end" sourceRef="task_smoke_test" targetRef="end_test_fix" />
+        </bpmn:subProcess>
+
+        <bpmn:serviceTask id="task_deploy" name="Deploy">
+          <bpmn:documentation>
+            knowledge:production-deployment,change-management,release-management,rollback-planning
+            data:deployment-package,production-config,change-request,rollback-plan
+            context:test-results,smoke-test-results,approval-status
+            decision:deploy-proceed,deployment-window
+            output:deployment-status,deployed-version,deployment-timestamp,rollback-available
+          </bpmn:documentation>
+        </bpmn:serviceTask>
+
+        <bpmn:endEvent id="end_fix" name="Fix Implementation Complete" />
+
+        <!-- L2 Fix Implementation Flows -->
+        <bpmn:sequenceFlow id="flow_fix_start" sourceRef="start_fix" targetRef="task_develop_fix" />
+        <bpmn:sequenceFlow id="flow_fix_dev_review" sourceRef="task_develop_fix" targetRef="task_peer_review" />
+        <bpmn:sequenceFlow id="flow_fix_review_test" sourceRef="task_peer_review" targetRef="sub_test_fix" />
+        <bpmn:sequenceFlow id="flow_fix_test_deploy" sourceRef="sub_test_fix" targetRef="task_deploy" />
+        <bpmn:sequenceFlow id="flow_fix_deploy_end" sourceRef="task_deploy" targetRef="end_fix" />
+      </bpmn:subProcess>
+
+      <bpmn:userTask id="task_verify_fix" name="Verify Fix">
+        <bpmn:documentation>
+          knowledge:verification,production-validation,monitoring,service-restoration-confirmation
+          data:deployment-status,monitoring-metrics,user-feedback,sla-compliance-check
+          context:deployment-status,original-incident-symptoms,containment-measures
+          decision:fix-verified,incident-resolved
+          output:verification-result,service-restored-confirmation,monitoring-baseline-restored
+        </bpmn:documentation>
+      </bpmn:userTask>
+
+      <bpmn:endEvent id="end_resolution" name="Resolution Complete" />
+
+      <!-- L1 Resolution Flows -->
+      <bpmn:sequenceFlow id="flow_res_start" sourceRef="start_resolution" targetRef="sub_containment" />
+      <bpmn:sequenceFlow id="flow_res_contain_rca" sourceRef="sub_containment" targetRef="sub_rca" />
+      <bpmn:sequenceFlow id="flow_res_rca_fix" sourceRef="sub_rca" targetRef="sub_fix_implementation" />
+      <bpmn:sequenceFlow id="flow_res_fix_verify" sourceRef="sub_fix_implementation" targetRef="task_verify_fix" />
+      <bpmn:sequenceFlow id="flow_res_verify_end" sourceRef="task_verify_fix" targetRef="end_resolution" />
+    </bpmn:subProcess>
+
+    <bpmn:subProcess id="sub_post_incident" name="Post-Incident">
+      <bpmn:documentation>
+        knowledge:post-incident,review,continuous-improvement,lessons-learned
+      </bpmn:documentation>
+
+      <!-- L1: Post-Incident -->
+      <bpmn:startEvent id="start_post" name="Start Post-Incident" />
+
+      <bpmn:userTask id="task_document_incident" name="Document Incident">
+        <bpmn:documentation>
+          knowledge:incident-documentation,technical-writing,timeline-reconstruction,knowledge-management
+          data:incident-timeline,actions-taken,rca-report,resolution-details
+          context:full-incident-history,resolution-outcome,root-cause
+          decision:documentation-completeness,audience-scope
+          output:incident-report,complete-timeline,lessons-identified,documentation-artifacts
+        </bpmn:documentation>
+      </bpmn:userTask>
+
+      <bpmn:userTask id="task_conduct_review" name="Conduct Review">
+        <bpmn:documentation>
+          knowledge:post-mortem,blameless-review,facilitation,retrospective-methods
+          data:incident-report,participant-list,review-agenda,action-history
+          context:incident-report,root-cause,resolution-effectiveness
+          decision:review-findings,process-gaps-identified
+          output:review-minutes,identified-gaps,process-improvement-areas,team-feedback
+        </bpmn:documentation>
+      </bpmn:userTask>
+
+      <bpmn:userTask id="task_identify_improvements" name="Identify Improvements">
+        <bpmn:documentation>
+          knowledge:continuous-improvement,process-optimization,preventive-measures,best-practices
+          data:review-findings,historical-incidents,industry-benchmarks,current-processes
+          context:review-minutes,identified-gaps,historical-incident-patterns
+          decision:improvement-priority,feasibility-assessment
+          output:improvement-proposals,priority-ranking,estimated-effort,expected-impact
+        </bpmn:documentation>
+      </bpmn:userTask>
+
+      <bpmn:userTask id="task_create_action_items" name="Create Action Items">
+        <bpmn:documentation>
+          knowledge:action-planning,project-management,task-tracking,accountability
+          data:improvement-proposals,team-capacity,project-backlog,deadline-constraints
+          context:improvement-proposals,priority-ranking,team-capacity
+          decision:action-item-assignment,timeline-commitment
+          output:action-item-list,assigned-owners,target-dates,tracking-references
+        </bpmn:documentation>
+      </bpmn:userTask>
+
+      <bpmn:endEvent id="end_post" name="Post-Incident Complete" />
+
+      <!-- L1 Post-Incident Flows -->
+      <bpmn:sequenceFlow id="flow_post_start" sourceRef="start_post" targetRef="task_document_incident" />
+      <bpmn:sequenceFlow id="flow_post_doc_review" sourceRef="task_document_incident" targetRef="task_conduct_review" />
+      <bpmn:sequenceFlow id="flow_post_review_improve" sourceRef="task_conduct_review" targetRef="task_identify_improvements" />
+      <bpmn:sequenceFlow id="flow_post_improve_actions" sourceRef="task_identify_improvements" targetRef="task_create_action_items" />
+      <bpmn:sequenceFlow id="flow_post_actions_end" sourceRef="task_create_action_items" targetRef="end_post" />
+    </bpmn:subProcess>
+
+    <bpmn:endEvent id="end_root" name="Incident Closed" />
+
+    <!-- L0 Root Flows -->
+    <bpmn:sequenceFlow id="flow_root_start" sourceRef="start_root" targetRef="sub_detection" />
+    <bpmn:sequenceFlow id="flow_root_detect_triage" sourceRef="sub_detection" targetRef="sub_triage" />
+    <bpmn:sequenceFlow id="flow_root_triage_resolve" sourceRef="sub_triage" targetRef="sub_resolution" />
+    <bpmn:sequenceFlow id="flow_root_resolve_post" sourceRef="sub_resolution" targetRef="sub_post_incident" />
+    <bpmn:sequenceFlow id="flow_root_post_end" sourceRef="sub_post_incident" targetRef="end_root" />
+  </bpmn:process>
+
+</bpmn:definitions>

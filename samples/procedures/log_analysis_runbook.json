@@ -1,0 +1,18 @@
+{
+  "id": "proc_log_analysis_runbook",
+  "title": "Log Analysis Runbook",
+  "content_summary": "Step-by-step runbook for collecting, filtering, and analyzing application and infrastructure logs during incident investigation. Covers log source identification, centralized log aggregation queries, pattern matching techniques, and timeline correlation across distributed systems. Includes common query templates for Splunk, ELK, and CloudWatch along with guidance on identifying anomalous patterns and establishing incident timelines.",
+  "category": "investigation",
+  "tags": ["log-analysis", "monitoring", "troubleshooting", "patterns", "log-collection", "correlation"],
+  "knowledge_type": "runbook",
+  "source": "SRE Runbook Collection v4.0",
+  "metadata": {
+    "last_updated": "2025-09-20",
+    "owner": "Site Reliability Engineering",
+    "review_cycle": "quarterly",
+    "compliance": null
+  },
+  "applicable_scopes": ["triage", "investigation", "log-analysis"],
+  "scope_level": "process",
+  "own_requirements": []
+}

@@ -1,0 +1,51 @@
+{
+  "id": "proc_rollback_procedure",
+  "title": "Service Rollback and Recovery Procedure",
+  "content_summary": "Comprehensive procedure for safely rolling back changes to restore service during an incident. Covers database rollback strategies, application version reversion, infrastructure configuration rollback, and DNS failover procedures. Includes pre-rollback verification checklists, rollback execution steps with validation gates, and post-rollback service health confirmation criteria to ensure stable recovery.",
+  "category": "containment",
+  "tags": ["rollback", "deployment", "containment", "recovery", "system-restore", "change-reversal"],
+  "knowledge_type": "procedure",
+  "source": "Change Management Procedures v5.0",
+  "metadata": {
+    "last_updated": "2025-08-12",
+    "owner": "Platform Engineering",
+    "review_cycle": "quarterly",
+    "compliance": "SOX"
+  },
+  "applicable_scopes": ["resolution", "containment", "fix-implementation"],
+  "scope_level": "process",
+  "own_requirements": [
+    {
+      "requirement_type": "approval",
+      "description": "Change management approval before rollback",
+      "tags": ["change-management", "approval", "authorization"],
+      "priority": "critical",
+      "regulatory_framework": null,
+      "mandatory": true
+    },
+    {
+      "requirement_type": "data",
+      "description": "Current system backup verification",
+      "tags": ["backup", "verification", "system-state"],
+      "priority": "critical",
+      "regulatory_framework": null,
+      "mandatory": true
+    },
+    {
+      "requirement_type": "regulatory",
+      "description": "SOX-compliant change audit trail",
+      "tags": ["sox", "audit-trail", "compliance", "change-tracking"],
+      "priority": "critical",
+      "regulatory_framework": "SOX",
+      "mandatory": true
+    },
+    {
+      "requirement_type": "sub-procedure",
+      "description": "Data retention check before artifact purge",
+      "tags": ["data-retention", "compliance", "purge-policy"],
+      "priority": "important",
+      "regulatory_framework": null,
+      "mandatory": false
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "proc_monitoring_setup",
+  "title": "Monitoring and Alerting Configuration Runbook",
+  "content_summary": "Runbook for configuring and maintaining monitoring infrastructure including application metrics, infrastructure health checks, and synthetic transaction monitors. Documents dashboard locations, alert threshold definitions, notification routing rules, and escalation triggers for automated alerting. Covers post-incident monitoring improvements including how to add new alerts, adjust thresholds based on incident learnings, and validate observability coverage gaps.",
+  "category": "detection",
+  "tags": ["monitoring", "alerting", "dashboards", "thresholds", "observability", "metrics"],
+  "knowledge_type": "runbook",
+  "source": "SRE Runbook Collection v4.0",
+  "metadata": {
+    "last_updated": "2025-09-05",
+    "owner": "Site Reliability Engineering",
+    "review_cycle": "quarterly",
+    "compliance": null
+  },
+  "applicable_scopes": ["detection", "post-incident"],
+  "scope_level": "process",
+  "own_requirements": []
+}

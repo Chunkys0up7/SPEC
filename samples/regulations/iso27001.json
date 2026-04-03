@@ -1,0 +1,76 @@
+{
+  "id": "ISO27001",
+  "name": "ISO/IEC 27001 Information Security",
+  "version": "2022",
+  "description": "Information security management system standard",
+  "jurisdiction": "global",
+  "controls": [
+    {
+      "control_id": "ISO27001-A5.25",
+      "title": "Assessment and Decision on Security Events",
+      "description": "Security events must be assessed to determine if they qualify as incidents",
+      "framework_id": "ISO27001",
+      "section_reference": "Annex A 5.25",
+      "severity": "mandatory",
+      "applies_to": [
+        {"trigger_type": "domain_match", "trigger_values": ["detection", "classification", "triage", "detection-and-classification"], "match_mode": "any"}
+      ],
+      "requirements": [
+        {"description": "Security events assessed using defined criteria", "category": "PROCEDURE", "tags": ["security-assessment", "event-classification", "incident-criteria"], "mandatory": true},
+        {"description": "Assessment decision recorded with rationale", "category": "DATA", "tags": ["assessment-record", "classification-rationale"], "mandatory": true}
+      ],
+      "evidence_requirements": ["Assessment record with criteria applied", "Assessor identification"],
+      "failure_consequence": "ISO 27001 non-conformity - audit finding"
+    },
+    {
+      "control_id": "ISO27001-A5.26",
+      "title": "Response to Information Security Incidents",
+      "description": "Incidents responded to according to documented procedures with evidence preservation",
+      "framework_id": "ISO27001",
+      "section_reference": "Annex A 5.26",
+      "severity": "mandatory",
+      "applies_to": [
+        {"trigger_type": "domain_match", "trigger_values": ["resolution", "containment", "investigation", "initial-investigation"], "match_mode": "any"}
+      ],
+      "requirements": [
+        {"description": "Response according to documented procedures", "category": "PROCEDURE", "tags": ["incident-response-procedure", "documented-procedure"], "mandatory": true},
+        {"description": "Evidence collected and preserved following forensic procedures", "category": "PROCEDURE", "tags": ["evidence-collection", "forensic-procedure", "chain-of-custody", "evidence-preservation"], "mandatory": true}
+      ],
+      "evidence_requirements": ["Response procedure reference", "Evidence handling log", "Chain of custody records"],
+      "failure_consequence": "ISO 27001 non-conformity - evidence may be inadmissible"
+    },
+    {
+      "control_id": "ISO27001-A5.28",
+      "title": "Collection of Evidence",
+      "description": "Evidence collection must follow procedures ensuring admissibility",
+      "framework_id": "ISO27001",
+      "section_reference": "Annex A 5.28",
+      "severity": "mandatory",
+      "applies_to": [
+        {"trigger_type": "tag_match", "trigger_values": ["evidence", "investigation", "log-analysis", "forensic", "rca"], "match_mode": "any"}
+      ],
+      "requirements": [
+        {"description": "Evidence collection follows admissibility procedures", "category": "PROCEDURE", "tags": ["evidence-admissibility", "preservation-procedure", "forensic-standard"], "mandatory": true}
+      ],
+      "evidence_requirements": ["Evidence log with timestamps", "Preservation method documentation"],
+      "failure_consequence": "Evidence inadmissible in legal or disciplinary proceedings"
+    },
+    {
+      "control_id": "ISO27001-A8.15",
+      "title": "Logging",
+      "description": "Activities involving system access or changes must produce audit logs",
+      "framework_id": "ISO27001",
+      "section_reference": "Annex A 8.15",
+      "severity": "mandatory",
+      "applies_to": [
+        {"trigger_type": "tag_match", "trigger_values": ["system-access", "system-change", "deployment", "rollback", "system-restore", "deploy"], "match_mode": "any"}
+      ],
+      "requirements": [
+        {"description": "Audit logs produced for system access and changes", "category": "DATA", "tags": ["audit-log", "access-log", "system-log", "activity-record"], "mandatory": true},
+        {"description": "Logs protected from tampering and unauthorized access", "category": "PROCEDURE", "tags": ["log-protection", "log-integrity", "tamper-proof"], "mandatory": true}
+      ],
+      "evidence_requirements": ["Log configuration record", "Log protection mechanism documentation"],
+      "failure_consequence": "ISO 27001 non-conformity - security controls cannot be verified"
+    }
+  ]
+}

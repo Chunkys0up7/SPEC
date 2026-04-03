@@ -1,0 +1,18 @@
+{
+  "id": "proc_sla_definitions",
+  "title": "Service Level Agreement Definitions",
+  "content_summary": "Reference document defining SLA targets for incident response and resolution times across all severity levels. Includes response time objectives, resolution time targets, escalation deadlines, and compliance reporting cadences for each priority tier. Documents measurement methodology, SLA clock start/stop rules, exclusion criteria for maintenance windows, and the monthly/quarterly reporting process for SLA adherence tracking.",
+  "category": "governance",
+  "tags": ["sla", "response-time", "resolution-time", "priority", "compliance", "reporting"],
+  "knowledge_type": "reference",
+  "source": "IT Governance Framework v6.0",
+  "metadata": {
+    "last_updated": "2025-12-01",
+    "owner": "IT Governance",
+    "review_cycle": "annual",
+    "compliance": "ITIL v4"
+  },
+  "applicable_scopes": ["all"],
+  "scope_level": "global",
+  "own_requirements": []
+}

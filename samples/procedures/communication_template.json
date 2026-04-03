@@ -1,0 +1,18 @@
+{
+  "id": "proc_communication_template",
+  "title": "Incident Communication Templates",
+  "content_summary": "Reference collection of stakeholder communication templates for different audiences and severity levels during incident management. Includes templates for executive briefings, technical team updates, customer-facing status messages, and regulatory notification letters. Provides guidance on communication frequency cadences per severity level and channel selection based on audience and urgency.",
+  "category": "communication",
+  "tags": ["communication", "stakeholder", "status-update", "notification", "template", "reporting"],
+  "knowledge_type": "reference",
+  "source": "Corporate Communications Playbook v2.0",
+  "metadata": {
+    "last_updated": "2025-07-30",
+    "owner": "Communications Team",
+    "review_cycle": "annual",
+    "compliance": null
+  },
+  "applicable_scopes": ["all"],
+  "scope_level": "global",
+  "own_requirements": []
+}

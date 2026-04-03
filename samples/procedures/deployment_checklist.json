@@ -1,0 +1,43 @@
+{
+  "id": "proc_deployment_checklist",
+  "title": "Deployment Verification Checklist",
+  "content_summary": "Comprehensive pre-deployment and post-deployment verification checklist for releasing fixes into production during incident resolution. Covers code review sign-off, staging environment validation, canary deployment monitoring, feature flag configuration, and production health verification steps. Includes rollback decision criteria at each deployment gate and minimum observation periods before declaring deployment successful.",
+  "category": "deployment",
+  "tags": ["deployment", "release", "testing", "staging", "go-live", "checklist", "approval"],
+  "knowledge_type": "checklist",
+  "source": "Release Engineering Standards v4.2",
+  "metadata": {
+    "last_updated": "2025-10-20",
+    "owner": "Release Engineering",
+    "review_cycle": "quarterly",
+    "compliance": "ITIL v4"
+  },
+  "applicable_scopes": ["resolution", "fix-implementation"],
+  "scope_level": "process",
+  "own_requirements": [
+    {
+      "requirement_type": "approval",
+      "description": "Release manager sign-off",
+      "tags": ["release-approval", "sign-off", "authorization"],
+      "priority": "critical",
+      "regulatory_framework": null,
+      "mandatory": true
+    },
+    {
+      "requirement_type": "data",
+      "description": "Staging environment test results",
+      "tags": ["staging", "test-results", "qa-sign-off"],
+      "priority": "critical",
+      "regulatory_framework": null,
+      "mandatory": true
+    },
+    {
+      "requirement_type": "compliance",
+      "description": "ITIL change management record",
+      "tags": ["itil", "change-record", "change-management"],
+      "priority": "important",
+      "regulatory_framework": "ITIL",
+      "mandatory": false
+    }
+  ]
+}

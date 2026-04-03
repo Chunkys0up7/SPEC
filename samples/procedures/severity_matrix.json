@@ -1,0 +1,27 @@
+{
+  "id": "proc_severity_matrix",
+  "title": "Incident Severity Classification Matrix",
+  "content_summary": "Defines severity levels (S1-S4) based on business impact and urgency. Includes criteria for each level, escalation thresholds, and SLA response/resolution times per severity. Used during initial classification and when severity changes during an incident. Provides guidance on re-classification triggers when incident scope expands or contracts.",
+  "category": "classification",
+  "tags": ["severity", "classification", "impact", "urgency", "sla", "escalation-threshold"],
+  "knowledge_type": "procedure",
+  "source": "IT Service Management Handbook v3.2",
+  "metadata": {
+    "last_updated": "2025-11-15",
+    "owner": "IT Service Desk",
+    "review_cycle": "quarterly",
+    "compliance": "ITIL v4"
+  },
+  "applicable_scopes": ["detection", "classification", "triage"],
+  "scope_level": "process",
+  "own_requirements": [
+    {
+      "requirement_type": "regulatory",
+      "description": "ISO 27001 incident classification compliance",
+      "tags": ["iso27001", "incident-classification", "compliance"],
+      "priority": "important",
+      "regulatory_framework": "ISO27001",
+      "mandatory": false
+    }
+  ]
+}

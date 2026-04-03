@@ -1,0 +1,93 @@
+{
+  "id": "ITIL_V4",
+  "name": "ITIL v4 Incident Management",
+  "version": "4.0",
+  "description": "IT Infrastructure Library framework for IT service management",
+  "jurisdiction": "global",
+  "controls": [
+    {
+      "control_id": "ITIL-IM-001",
+      "title": "Incident Logging and Classification",
+      "description": "All incidents must be logged and classified using agreed categorization scheme",
+      "framework_id": "ITIL_V4",
+      "section_reference": "ITIL4 5.2.5",
+      "severity": "mandatory",
+      "applies_to": [
+        {"trigger_type": "domain_match", "trigger_values": ["detection", "detection-and-classification", "classification"], "match_mode": "any"}
+      ],
+      "requirements": [
+        {"description": "Incidents must be logged with unique ID, timestamp, reporter, and initial category", "category": "DATA", "tags": ["incident-log", "unique-id", "timestamp", "classification"], "mandatory": true},
+        {"description": "Classification using agreed categorization scheme", "category": "PROCEDURE", "tags": ["categorization", "classification-scheme", "severity-matrix"], "mandatory": true}
+      ],
+      "evidence_requirements": ["Incident record with all mandatory fields", "Classification timestamp"],
+      "failure_consequence": "Non-compliance with ITIL incident management practice"
+    },
+    {
+      "control_id": "ITIL-IM-002",
+      "title": "Incident Prioritization",
+      "description": "Priority must be determined using impact x urgency matrix",
+      "framework_id": "ITIL_V4",
+      "section_reference": "ITIL4 5.2.5",
+      "severity": "mandatory",
+      "applies_to": [
+        {"trigger_type": "tag_match", "trigger_values": ["severity", "priority", "urgency", "impact", "impact-assessment"], "match_mode": "any"}
+      ],
+      "requirements": [
+        {"description": "Priority determined using impact x urgency matrix", "category": "PROCEDURE", "tags": ["priority-matrix", "impact-urgency", "sla-mapping"], "mandatory": true}
+      ],
+      "evidence_requirements": ["Priority assignment record", "SLA clock start timestamp"],
+      "failure_consequence": "SLA breach risk - incorrect priority leads to wrong response times"
+    },
+    {
+      "control_id": "ITIL-CM-001",
+      "title": "Change Management for Incident Resolution",
+      "description": "All changes to resolve incidents must follow change management process",
+      "framework_id": "ITIL_V4",
+      "section_reference": "ITIL4 5.2.4",
+      "severity": "mandatory",
+      "applies_to": [
+        {"trigger_type": "domain_match", "trigger_values": ["resolution", "fix-implementation", "deployment", "containment"], "match_mode": "any"},
+        {"trigger_type": "tag_match", "trigger_values": ["deployment", "rollback", "system-change", "fix", "deploy"], "match_mode": "any"}
+      ],
+      "requirements": [
+        {"description": "All changes recorded as change records", "category": "DATA", "tags": ["change-record", "change-id", "change-log"], "mandatory": true},
+        {"description": "Emergency changes follow expedited change approval process", "category": "PROCEDURE", "tags": ["emergency-change", "expedited-approval", "cab-notification"], "mandatory": true}
+      ],
+      "evidence_requirements": ["Change record ID", "Approval timestamp", "CAB notification if applicable"],
+      "failure_consequence": "Uncontrolled changes - risk of further service degradation"
+    },
+    {
+      "control_id": "ITIL-KM-001",
+      "title": "Known Error Database Check",
+      "description": "Known error database must be consulted before investigation",
+      "framework_id": "ITIL_V4",
+      "section_reference": "ITIL4 5.2.6",
+      "severity": "recommended",
+      "applies_to": [
+        {"trigger_type": "domain_match", "trigger_values": ["investigation", "triage", "root-cause-analysis", "initial-investigation"], "match_mode": "any"}
+      ],
+      "requirements": [
+        {"description": "Known error database consulted before investigation", "category": "PROCEDURE", "tags": ["known-error-db", "kedb", "known-issues", "workaround"], "mandatory": false}
+      ],
+      "evidence_requirements": ["KEDB search record", "Search timestamp"],
+      "failure_consequence": "Wasted investigation time on already-known issues"
+    },
+    {
+      "control_id": "ITIL-PIR-001",
+      "title": "Post-Incident Review",
+      "description": "Major incidents must have formal post-incident review",
+      "framework_id": "ITIL_V4",
+      "section_reference": "ITIL4 5.2.5",
+      "severity": "mandatory",
+      "applies_to": [
+        {"trigger_type": "domain_match", "trigger_values": ["post-incident"], "match_mode": "any"}
+      ],
+      "requirements": [
+        {"description": "Formal post-incident review within 5 business days", "category": "PROCEDURE", "tags": ["post-incident-review", "major-incident", "formal-review"], "mandatory": true},
+        {"description": "Review documents root cause, timeline, and improvement actions", "category": "DATA", "tags": ["root-cause-documentation", "timeline", "improvement-actions", "action-items"], "mandatory": true}
+      ],
+      "evidence_requirements": ["PIR report", "Action items with owners and deadlines"],
+      "failure_consequence": "Failure to learn from incidents - recurring service disruptions"
+    }
+  ]
+}

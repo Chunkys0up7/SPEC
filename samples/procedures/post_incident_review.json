@@ -1,0 +1,35 @@
+{
+  "id": "proc_post_incident_review",
+  "title": "Post-Incident Review Procedure",
+  "content_summary": "Defines the blameless post-mortem process for reviewing incidents after resolution. Covers scheduling guidelines, participant roles, meeting facilitation structure, and the standard review template including timeline reconstruction, impact assessment, contributing factors analysis, and action item generation. Provides criteria for determining which incidents require formal review versus lightweight retrospectives based on severity and blast radius.",
+  "category": "review",
+  "tags": ["post-mortem", "review", "improvements", "lessons-learned", "action-items", "blameless"],
+  "knowledge_type": "procedure",
+  "source": "Incident Management Policy v2.1",
+  "metadata": {
+    "last_updated": "2025-11-01",
+    "owner": "Engineering Management",
+    "review_cycle": "annual",
+    "compliance": null
+  },
+  "applicable_scopes": ["post-incident"],
+  "scope_level": "process",
+  "own_requirements": [
+    {
+      "requirement_type": "data",
+      "description": "Complete incident timeline with all actions taken",
+      "tags": ["timeline", "incident-log", "action-history"],
+      "priority": "critical",
+      "regulatory_framework": null,
+      "mandatory": true
+    },
+    {
+      "requirement_type": "procedure",
+      "description": "Blameless post-mortem facilitation guide",
+      "tags": ["facilitation", "blameless", "post-mortem-guide"],
+      "priority": "important",
+      "regulatory_framework": null,
+      "mandatory": false
+    }
+  ]
+}
