@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: 'Spline Sans', system-ui, sans-serif;
+  color: #f3eeff;
+  background:
+    radial-gradient(680px 460px at 6% -8%, rgba(158, 216, 99, 0.16) 0%, transparent 60%),
+    radial-gradient(640px 460px at 104% 2%, rgba(255, 90, 158, 0.15) 0%, transparent 58%),
+    radial-gradient(760px 520px at 50% 114%, rgba(70, 211, 236, 0.14) 0%, transparent 62%),
+    linear-gradient(168deg, #1b1635, #120f24) fixed;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+.font-display {
+  font-family: 'Fraunces', serif;
+}
+
+/* button reset */
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
